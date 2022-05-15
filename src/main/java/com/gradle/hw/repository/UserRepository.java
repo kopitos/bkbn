@@ -3,9 +3,10 @@ package com.gradle.hw.repository;
 import com.gradle.hw.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("SELECT u from User u WHERE u.email = ?1")
-    public User findByEmail(String email);
+    @Query("FROM User WHERE email=:email")
+    User findByEmail(@Param("email") String email);
 }
