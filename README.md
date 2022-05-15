@@ -11,20 +11,19 @@
 	http://localhost:8080/events
 
 # Requests
-
 {
- "email": "user@1",
+"email": "user@1",
  "firstName": "fn1",
  "lastName": "ln1",
  "password": "123456"
- }
- {
- "email": "user@2",
+}
+{
+"email": "user@2",
  "firstName": "fn2",
  "lastName": "ln2",
  "password": "123456"
- }
- {
+}
+{
  "title": "event of user 1",
  "start": "2022-05-16",
  "end": "2022-05-20",
