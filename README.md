@@ -1,13 +1,13 @@
-# GET <USERS>
+# GET USERS
 	http://localhost:8080/users
 
-# GET <EVENTS>
+# GET EVENTS
 	http://localhost:8080/events
 
-# POST <Register New User>
+# POST Register New User
 	http://localhost:8080/register
 
-# POST <Create New Event>
+# POST Create New Event
 	http://localhost:8080/events
 
 # Requests
