@@ -3,10 +3,7 @@ package com.gradle.hw.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gradle.hw.model.Event;
-import com.gradle.hw.model.User;
-import com.gradle.hw.model.WeatherInfo;
-import com.gradle.hw.model.WeatherUrl;
+import com.gradle.hw.model.*;
 import com.gradle.hw.repository.EventRepository;
 import com.gradle.hw.repository.UserRepository;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -23,9 +20,10 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class Controller {
@@ -43,31 +41,42 @@ public class Controller {
     RestTemplate restTemp;
 
     @GetMapping("/users")
-    public Optional<User> getUsers(HttpServletRequest request) {
+    public ResponseEntity<UserInfo> getUsers(HttpServletRequest request) {
 
+        UserInfo userInfo = new UserInfo();
         User user = authenticate(request);
-        return userRepository.findById(user.getId());
+        userInfo.setEmail(user.getEmail());
+        userInfo.setName(user.getFirstName()+ " " + user.getLastName());
+        //return userRepository.findById(user.getId());
+        return ResponseEntity.ok(userInfo);
     }
 
     @GetMapping("/events")
-    public List<Event> getEvents(HttpServletRequest request) {
+    public ResponseEntity<List<EventInfo>> getEvents(HttpServletRequest request) {
 
         User user = authenticate(request);
-        return eventRepository.findByUser(user);
+        List<EventInfo> eventInfoList = new ArrayList<EventInfo>();
+        List<Event> event = eventRepository.findByUser(user);
+        for (Event e : event) {
+            EventInfo eventInfo = new EventInfo(e.getTitle(), e.getStart(), e.getEnd(), e.getDescription(), e.getWeather());
+            eventInfoList.add(eventInfo);
+        }
+
+        return ResponseEntity.ok(eventInfoList);
     }
 
     @PostMapping("/register")
-    public User createUser(@RequestBody User user) {
+    public ResponseEntity<String> createUser(@RequestBody User user) {
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-
-        return userRepository.save(user);
+        userRepository.save(user);
+        return ResponseEntity.created(URI.create("")).body("User is created successfully!");
     }
 
     @PostMapping("/events")
-    public Event createEvent(@RequestBody Event event, HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<String> createEvent(@RequestBody Event event, HttpServletRequest request) throws JsonProcessingException {
         String desc = null;
         User user = authenticate(request);
         WeatherInfo weatherInfo = getWeather(event.getStart());
@@ -75,7 +84,9 @@ public class Controller {
 
         event.setWeather(desc);
         event.setUser(user);
-        return eventRepository.save(event);
+        eventRepository.save(event);
+
+        return ResponseEntity.created(URI.create("")).body("Event is created successfully!");
     }
 
     private User authenticate(HttpServletRequest request){
