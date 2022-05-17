@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -79,6 +80,7 @@ public class Controller {
     public ResponseEntity<String> createEvent(@RequestBody Event event, HttpServletRequest request) throws JsonProcessingException {
         String desc = null;
         User user = authenticate(request);
+        //long unixTime = event.getStart().getTime() / 1000L;
         WeatherInfo weatherInfo = getWeather(event.getStart());
         desc = "The temperature on " + event.getStart() + " is: " + weatherInfo.getTemperature() + "K. And there is " + weatherInfo.getWeatherDescription();
 
