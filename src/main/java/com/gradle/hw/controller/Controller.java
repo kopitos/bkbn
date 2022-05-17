@@ -1,7 +1,6 @@
 package com.gradle.hw.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gradle.hw.model.*;
 import com.gradle.hw.repository.EventRepository;
@@ -23,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -93,12 +91,12 @@ public class Controller {
 
     private User authenticate(HttpServletRequest request){
         String upd = request.getHeader("authorization");
-        String pair=new String(Base64.decodeBase64(upd.substring(6)));
-        String userName=pair.split(":")[0];
+        String pair = new String(Base64.decodeBase64(upd.substring(6)));
+        String userName = pair.split(":")[0];
         return userRepository.findByEmail(userName);
     }
 
-    public WeatherInfo getWeather(LocalDate date) throws JsonMappingException, JsonProcessingException {
+    public WeatherInfo getWeather(LocalDate date) throws JsonProcessingException {
         String city = "Aachen";
         UriComponents uriComponents = UriComponentsBuilder
                 .newInstance()
